@@ -1,33 +1,31 @@
 class Solution:
     def checkInclusion(self, s1: str, s2: str) -> bool:
-        if len(s2) < len(s1):
+        if len(s1) > len(s2):
             return False
+
+        s1_counts = {}
+        for char in s1:
+            s1_counts[char] = s1_counts.setdefault(char, 0) + 1
         
-        freq = {}
-        win = {}
-        count = 0
 
-        for c in s1:
-            freq[c] = freq.get(c, 0) + 1
+        sub_counts = {}
+        for i in range(len(s1)):
+            sub_counts[s2[i]] = sub_counts.setdefault(s2[i], 0) + 1
         
-        l = r = 0
-        while r < len(s2):
-            win[s2[r]] = win.get(s2[r], 0) + 1
-            count += 1
+        if s1_counts == sub_counts:
+            return True
+        
+        l = 0
+        for r in range(len(s1), len(s2)):
+            sub_counts[s2[r]] = sub_counts.setdefault(s2[r], 0) + 1
+            sub_counts[s2[l]] -= 1
 
-            if count == len(s1):
-                print(win)
-                if freq == win:
-                    return True
-                
-                win[s2[l]] -= 1
-                if win[s2[l]] == 0:
-                    win.pop(s2[l])
-                
-                l += 1
-                count -= 1
-
-            r += 1
+            if sub_counts[s2[l]] == 0:
+                del sub_counts[s2[l]]
+            
+            if s1_counts == sub_counts:
+                return True
+            
+            l += 1
         
         return False
-        
